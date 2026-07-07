@@ -2,3 +2,12 @@
   display: grid;
   gap: 12px;
 }
+
+.repo-list-entry {
+  display: grid;
+  gap: 10px;
+}
+
+.inline-detail {
+  display: block;
+}

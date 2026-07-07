@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
-import { RepoSummary } from '../../core/github/github.types';
+import { RepoDetail, RepoSummary } from '../../core/github/github.types';
 import { RepoListComponent } from './repo-list.component';
 
 describe('RepoListComponent', () => {
@@ -21,7 +21,28 @@ describe('RepoListComponent', () => {
         htmlUrl: 'https://github.com/angular',
       },
     },
+    {
+      id: 2,
+      name: 'react',
+      fullName: 'facebook/react',
+      description: 'The library for web and native user interfaces.',
+      htmlUrl: 'https://github.com/facebook/react',
+      stargazersCount: 240_000,
+      language: 'JavaScript',
+      owner: {
+        login: 'facebook',
+        avatarUrl: 'https://avatars.githubusercontent.com/u/69631',
+        htmlUrl: 'https://github.com/facebook',
+      },
+    },
   ];
+  const reactDetail: RepoDetail = {
+    ...repos[1],
+    forksCount: 49_000,
+    openIssuesCount: 1_100,
+    licenseName: 'MIT License',
+    createdAt: new Date('2013-05-24T16:15:54Z'),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -61,5 +82,22 @@ describe('RepoListComponent', () => {
     button.click();
 
     expect(favoriteToggled).toHaveBeenCalledWith(repos[0]);
+  });
+
+  it('renders repository detail directly after the selected repository', () => {
+    fixture.componentRef.setInput('selectedRepo', repos[1]);
+    fixture.componentRef.setInput('detailState', { kind: 'success', data: reactDetail });
+    fixture.detectChanges();
+
+    const listEntries = [
+      ...fixture.nativeElement.querySelectorAll('.repo-list-entry'),
+    ] as HTMLElement[];
+    const selectedDetail = listEntries[1].querySelector('app-repo-detail-panel');
+
+    expect(listEntries).toHaveLength(2);
+    expect(listEntries[0].querySelector('app-repo-detail-panel')).toBeNull();
+    expect(selectedDetail).not.toBeNull();
+    expect(selectedDetail?.textContent).toContain('facebook/react');
+    expect(selectedDetail?.textContent).toContain('49,000');
   });
 });

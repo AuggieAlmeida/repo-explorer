@@ -41,10 +41,11 @@
           <app-repo-list
             [repos]="state.data.items"
             [favoriteKeys]="favoriteKeys()"
+            [selectedRepo]="searchState.selectedRepo()"
+            [detailState]="searchState.detailState()"
             (selected)="searchState.select($event)"
             (favoriteToggled)="favorites.toggle($event)"
           />
-          <app-repo-detail-panel [state]="searchState.detailState()" />
         </div>
         @if (searchState.canLoadMore()) {
           <button

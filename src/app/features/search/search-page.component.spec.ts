@@ -44,6 +44,7 @@ describe('SearchPageComponent', () => {
                 ],
               },
             }),
+            selectedRepo: signal(null),
             detailState: signal({ kind: 'idle' }),
             canLoadMore: signal(true),
             loadingMore: signal(false),

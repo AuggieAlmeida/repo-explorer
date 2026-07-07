@@ -3,13 +3,12 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 
 import { StatusPanelComponent } from '../../shared/status-panel.component';
 import { FavoritesService } from '../favorites/favorites.service';
-import { RepoDetailPanelComponent } from './repo-detail-panel.component';
 import { RepoListComponent } from './repo-list.component';
 import { SearchStateService } from './search-state.service';
 
 @Component({
   selector: 'app-search-page',
-  imports: [DecimalPipe, RepoDetailPanelComponent, RepoListComponent, StatusPanelComponent],
+  imports: [DecimalPipe, RepoListComponent, StatusPanelComponent],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

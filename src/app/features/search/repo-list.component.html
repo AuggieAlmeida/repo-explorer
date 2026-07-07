@@ -1,11 +1,16 @@
 <div class="repo-list" role="list">
   @for (repo of repos(); track repo.id) {
-    <app-repo-list-item
-      role="listitem"
-      [repo]="repo"
-      [favorite]="favoriteKeys().has(repo.fullName)"
-      (selected)="selected.emit($event)"
-      (favoriteToggled)="favoriteToggled.emit($event)"
-    />
+    <div class="repo-list-entry" role="listitem">
+      <app-repo-list-item
+        [repo]="repo"
+        [favorite]="favoriteKeys().has(repo.fullName)"
+        (selected)="selected.emit($event)"
+        (favoriteToggled)="favoriteToggled.emit($event)"
+      />
+
+      @if (selectedRepo()?.fullName === repo.fullName) {
+        <app-repo-detail-panel class="inline-detail" [state]="detailState()" />
+      }
+    </div>
   }
 </div>

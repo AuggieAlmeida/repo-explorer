@@ -48,7 +48,7 @@ npm run build
 | Estrutura Angular    | Componentes standalone e rotas lazy                                    | Atende Angular 17+, reduz boilerplate e deixa as fronteiras de rota claras.                                               |
 | Estado               | Signals + RxJS                                                         | Signals servem bem para estado de UI/favoritos; RxJS serve melhor para debounce, cancelamento e erro em fluxo assíncrono. |
 | Store externa        | Nenhuma                                                                | Um app de busca/favoritos não justifica NgRx ou outra store global.                                                       |
-| Detalhe              | Painel lateral na tela de busca                                        | Cumpre o fetch sob demanda sem adicionar escopo de rota profunda.                                                         |
+| Detalhe              | Painel inline abaixo do item selecionado na busca                      | Cumpre o fetch sob demanda sem adicionar escopo de rota profunda e mantém o detalhe no ponto de leitura.                  |
 | Estilo               | CSS puro                                                               | Menos dependência para justificar; clareza vale mais que cobertura visual de framework.                                   |
 | Performance da lista | `@for` com `track repo.id`, OnPush, avatars lazy e paginação do GitHub | Combina com o formato da API. Virtual scroll é desnecessário para páginas de 30 itens e fica documentado como evolução.   |
 | Cache                | Em memória por `term::page`                                            | Reduz chamadas repetidas. O cache reinicia com a sessão de propósito.                                                     |
@@ -79,7 +79,7 @@ Eu separaria o app em bibliotecas por domínio, aplicaria regras de boundary no 
 
 - OAuth ou token do GitHub: aumenta custo de setup e tratamento de segredo.
 - Backend proxy: desnecessário para o desafio com API pública.
-- Rota profunda para detalhe: útil depois, mas o painel lateral mantém o escopo focado.
+- Rota profunda para detalhe: útil depois, mas o painel inline mantém o escopo focado.
 - CDK virtual scroll: faz mais sentido quando o volume de resultados não depende da paginação do GitHub.
 - Cache offline de detalhes: favoritos já guardam o snapshot mínimo offline.
 - Cobertura exaustiva: os testes miram riscos do desafio, não um número de cobertura.

@@ -1,9 +1,6 @@
 .detail-panel {
-  position: sticky;
-  top: 20px;
   display: grid;
   gap: 14px;
-  align-self: start;
   border: 1px solid #dce3ed;
   border-radius: 8px;
   padding: 18px;
