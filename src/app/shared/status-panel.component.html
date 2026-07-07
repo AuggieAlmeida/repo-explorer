@@ -20,6 +20,7 @@
 
       @if (current.error.kind === 'rate-limit' && current.error.resetAt) {
         <p class="reset">Reset {{ current.error.resetAt | date: 'shortTime' }}</p>
+        <p class="reset">Resets in {{ resetCountdown(current.error.resetAt) }}</p>
       }
 
       <button type="button" (click)="retry.emit()">Try again</button>

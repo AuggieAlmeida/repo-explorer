@@ -8,9 +8,11 @@ import { SearchPageComponent } from './search-page.component';
 describe('SearchPageComponent', () => {
   let fixture: ComponentFixture<SearchPageComponent>;
   const search = vi.fn();
+  const loadMore = vi.fn();
 
   beforeEach(async () => {
     search.mockReset();
+    loadMore.mockReset();
 
     await TestBed.configureTestingModule({
       imports: [SearchPageComponent],
@@ -43,8 +45,11 @@ describe('SearchPageComponent', () => {
               },
             }),
             detailState: signal({ kind: 'idle' }),
+            canLoadMore: signal(true),
+            loadingMore: signal(false),
             search,
             select: vi.fn(),
+            loadMore,
             retry: vi.fn(),
           },
         },
@@ -69,5 +74,13 @@ describe('SearchPageComponent', () => {
 
     expect(text).toContain('1 repositories found');
     expect(text).toContain('angular/angular');
+  });
+
+  it('loads more results from the next page', () => {
+    const button = fixture.nativeElement.querySelector('.load-more') as HTMLButtonElement;
+
+    button.click();
+
+    expect(loadMore).toHaveBeenCalledOnce();
   });
 });

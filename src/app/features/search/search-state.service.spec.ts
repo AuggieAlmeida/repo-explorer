@@ -124,6 +124,39 @@ describe('SearchStateService', () => {
       },
     });
   });
+
+  it('loads the next GitHub page and appends it to current results', async () => {
+    service.search('angular');
+    await vi.advanceTimersByTimeAsync(300);
+    const firstPage = http.expectOne(
+      (req) => req.params.get('q') === 'angular' && req.params.get('page') === '1',
+    );
+    firstPage.flush({
+      total_count: 2,
+      incomplete_results: false,
+      items: [repoResponse('angular/angular')],
+    });
+
+    service.loadMore();
+
+    const secondPage = http.expectOne(
+      (req) => req.params.get('q') === 'angular' && req.params.get('page') === '2',
+    );
+    secondPage.flush({
+      total_count: 2,
+      incomplete_results: false,
+      items: [repoResponse('angular/components')],
+    });
+
+    expect(service.state()).toEqual({
+      kind: 'success',
+      data: {
+        totalCount: 2,
+        incompleteResults: false,
+        items: [repo('angular/angular'), repo('angular/components')],
+      },
+    });
+  });
 });
 
 function searchResponse(fullNames: string[]) {

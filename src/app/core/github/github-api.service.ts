@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 
 import {
   GitHubRepositoryDetailResponse,
@@ -17,8 +17,15 @@ const PAGE_SIZE = 30;
 @Injectable({ providedIn: 'root' })
 export class GithubApiService {
   private readonly http = inject(HttpClient);
+  private readonly searchCache = new Map<string, RepoSearchResult>();
 
   search(term: string, page = 1): Observable<RepoSearchResult> {
+    const cacheKey = searchCacheKey(term, page);
+    const cached = this.searchCache.get(cacheKey);
+    if (cached) {
+      return of(cached);
+    }
+
     const params = new HttpParams()
       .set('q', term)
       .set('page', page)
@@ -26,7 +33,10 @@ export class GithubApiService {
 
     return this.http
       .get<GitHubSearchResponse>(`${GITHUB_API_URL}/search/repositories`, { params })
-      .pipe(map(mapSearchResult));
+      .pipe(
+        map(mapSearchResult),
+        tap((result) => this.searchCache.set(cacheKey, result)),
+      );
   }
 
   getRepo(owner: string, name: string): Observable<RepoDetail> {
@@ -37,6 +47,10 @@ export class GithubApiService {
       .get<GitHubRepositoryDetailResponse>(`${GITHUB_API_URL}/repos/${safeOwner}/${safeName}`)
       .pipe(map(mapRepoDetail));
   }
+}
+
+function searchCacheKey(term: string, page: number): string {
+  return `${term.trim().toLowerCase()}::${page}`;
 }
 
 function mapSearchResult(response: GitHubSearchResponse): RepoSearchResult {

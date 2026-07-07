@@ -32,6 +32,7 @@ describe('StatusPanelComponent', () => {
     const text = fixture.nativeElement.textContent as string;
     expect(text).toContain('GitHub API rate limit reached');
     expect(text).toContain('Reset');
+    expect(text).toContain('Resets in');
 
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
     button.click();

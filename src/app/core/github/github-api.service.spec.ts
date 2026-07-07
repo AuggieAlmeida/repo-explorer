@@ -94,6 +94,25 @@ describe('GithubApiService', () => {
       created_at: '2014-09-18T16:12:01Z',
     });
   });
+
+  it('serves repeated search pages from memory cache', () => {
+    const firstResults: unknown[] = [];
+    const secondResults: unknown[] = [];
+
+    service.search('angular', 1).subscribe((result) => firstResults.push(result));
+
+    const request = http.expectOne((req) => req.params.get('q') === 'angular');
+    request.flush({
+      total_count: 1,
+      incomplete_results: false,
+      items: [rawRepository()],
+    });
+
+    service.search('angular', 1).subscribe((result) => secondResults.push(result));
+
+    http.expectNone((req) => req.params.get('q') === 'angular');
+    expect(secondResults).toEqual(firstResults);
+  });
 });
 
 function rawRepository() {

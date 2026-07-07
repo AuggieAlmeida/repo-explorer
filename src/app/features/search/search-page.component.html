@@ -46,6 +46,16 @@
           />
           <app-repo-detail-panel [state]="searchState.detailState()" />
         </div>
+        @if (searchState.canLoadMore()) {
+          <button
+            class="load-more"
+            type="button"
+            [disabled]="searchState.loadingMore()"
+            (click)="searchState.loadMore()"
+          >
+            {{ searchState.loadingMore() ? 'Loading...' : 'Load more' }}
+          </button>
+        }
       }
     }
   </section>
