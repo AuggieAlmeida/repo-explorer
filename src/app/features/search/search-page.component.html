@@ -1,0 +1,38 @@
+<main class="search-page">
+  <section class="hero" aria-labelledby="search-title">
+    <p class="eyebrow">GitHub repository explorer</p>
+    <h1 id="search-title">Find repositories without wasting API calls.</h1>
+    <label class="search-box">
+      <span>Search repositories</span>
+      <input
+        type="search"
+        placeholder="angular, react, rxjs..."
+        [value]="searchState.query()"
+        (input)="search($event)"
+        autocomplete="off"
+      />
+    </label>
+  </section>
+
+  @let state = searchState.state();
+
+  <section class="results" aria-live="polite">
+    @switch (state.kind) {
+      @case ('idle') {
+        <p>Type at least two characters to start.</p>
+      }
+      @case ('loading') {
+        <p>Searching GitHub...</p>
+      }
+      @case ('empty') {
+        <p>No repositories found for this search.</p>
+      }
+      @case ('error') {
+        <p>{{ state.error.message }}</p>
+      }
+      @case ('success') {
+        <pre>{{ state.data | json }}</pre>
+      }
+    }
+  </section>
+</main>
