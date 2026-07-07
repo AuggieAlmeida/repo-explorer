@@ -38,7 +38,12 @@
           }
         </div>
         <div class="results-grid">
-          <app-repo-list [repos]="state.data.items" (selected)="searchState.select($event)" />
+          <app-repo-list
+            [repos]="state.data.items"
+            [favoriteKeys]="favoriteKeys()"
+            (selected)="searchState.select($event)"
+            (favoriteToggled)="favorites.toggle($event)"
+          />
           <app-repo-detail-panel [state]="searchState.detailState()" />
         </div>
       }

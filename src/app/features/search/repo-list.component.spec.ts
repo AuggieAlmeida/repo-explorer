@@ -52,4 +52,14 @@ describe('RepoListComponent', () => {
 
     expect(selected).toHaveBeenCalledWith(repos[0]);
   });
+
+  it('emits favorite toggles from list items', () => {
+    const favoriteToggled = vi.fn();
+    fixture.componentInstance.favoriteToggled.subscribe(favoriteToggled);
+
+    const button = fixture.nativeElement.querySelector('.favorite-button') as HTMLButtonElement;
+    button.click();
+
+    expect(favoriteToggled).toHaveBeenCalledWith(repos[0]);
+  });
 });

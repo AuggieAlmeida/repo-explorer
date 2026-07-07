@@ -1,1 +1,9 @@
+<header class="app-header">
+  <a class="brand" routerLink="/">Repo Explorer</a>
+  <nav aria-label="Primary">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Search</a>
+    <a routerLink="/favorites" routerLinkActive="active">Favorites</a>
+  </nav>
+</header>
+
 <router-outlet />

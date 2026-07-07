@@ -1,7 +1,8 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
 import { StatusPanelComponent } from '../../shared/status-panel.component';
+import { FavoritesService } from '../favorites/favorites.service';
 import { RepoDetailPanelComponent } from './repo-detail-panel.component';
 import { RepoListComponent } from './repo-list.component';
 import { SearchStateService } from './search-state.service';
@@ -15,6 +16,10 @@ import { SearchStateService } from './search-state.service';
 })
 export class SearchPageComponent {
   protected readonly searchState = inject(SearchStateService);
+  protected readonly favorites = inject(FavoritesService);
+  protected readonly favoriteKeys = computed(
+    () => new Set(this.favorites.favorites().map((favorite) => favorite.key)),
+  );
 
   protected search(event: Event): void {
     const input = event.target as HTMLInputElement;

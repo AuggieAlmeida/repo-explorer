@@ -12,5 +12,7 @@ import { RepoSummary } from '../../core/github/github.types';
 })
 export class RepoListItemComponent {
   readonly repo = input.required<RepoSummary>();
+  readonly favorite = input(false);
   readonly selected = output<RepoSummary>();
+  readonly favoriteToggled = output<RepoSummary>();
 }

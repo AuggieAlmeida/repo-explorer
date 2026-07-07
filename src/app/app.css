@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  border-bottom: 1px solid #dce3ed;
+  padding: 14px 24px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.brand,
+nav a {
+  color: #172033;
+  text-decoration: none;
+}
+
+.brand {
+  font-weight: 900;
+}
+
+nav {
+  display: flex;
+  gap: 8px;
+}
+
+nav a {
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-weight: 700;
+}
+
+nav a.active,
+nav a:hover {
+  background: #e8eef7;
+}

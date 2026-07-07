@@ -1,0 +1,19 @@
+<main class="favorites-page">
+  <header>
+    <p class="eyebrow">Saved repositories</p>
+    <h1>Favorites</h1>
+  </header>
+
+  @if (favorites.favorites().length === 0) {
+    <section class="empty">
+      <h2>No favorites yet</h2>
+      <p>Use the search page to save repositories for later.</p>
+    </section>
+  } @else {
+    <app-repo-list
+      [repos]="favorites.favorites()"
+      [favoriteKeys]="favoriteKeys()"
+      (favoriteToggled)="favorites.toggle($event)"
+    />
+  }
+</main>

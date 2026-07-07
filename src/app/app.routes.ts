@@ -6,4 +6,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/search/search-page.component').then((m) => m.SearchPageComponent),
   },
+  {
+    path: 'favorites',
+    loadComponent: () =>
+      import('./features/favorites/favorites-page.component').then((m) => m.FavoritesPageComponent),
+  },
 ];

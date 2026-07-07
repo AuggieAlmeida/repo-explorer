@@ -12,5 +12,7 @@ import { RepoListItemComponent } from './repo-list-item.component';
 })
 export class RepoListComponent {
   readonly repos = input.required<RepoSummary[]>();
+  readonly favoriteKeys = input<ReadonlySet<string>>(new Set());
   readonly selected = output<RepoSummary>();
+  readonly favoriteToggled = output<RepoSummary>();
 }
