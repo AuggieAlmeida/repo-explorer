@@ -26,10 +26,7 @@ export class GithubApiService {
       return of(cached);
     }
 
-    const params = new HttpParams()
-      .set('q', term)
-      .set('page', page)
-      .set('per_page', PAGE_SIZE);
+    const params = new HttpParams().set('q', term).set('page', page).set('per_page', PAGE_SIZE);
 
     return this.http
       .get<GitHubSearchResponse>(`${GITHUB_API_URL}/search/repositories`, { params })

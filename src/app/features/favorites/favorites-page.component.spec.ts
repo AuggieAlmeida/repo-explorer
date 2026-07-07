@@ -57,8 +57,6 @@ describe('FavoritesPageComponent', () => {
 
     button.click();
 
-    expect(toggle).toHaveBeenCalledWith(
-      expect.objectContaining({ fullName: 'angular/angular' }),
-    );
+    expect(toggle).toHaveBeenCalledWith(expect.objectContaining({ fullName: 'angular/angular' }));
   });
 });
