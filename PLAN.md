@@ -2,6 +2,8 @@
 
 Plano de execução do teste "Explorador de Repositórios". Referência: enunciado do teste (PDF) + linha técnica preparada para a reunião de 2026-07-08. Princípio de avaliação declarado no enunciado: **decisões bem justificadas > volume de features**. Escopo alvo: 3–4h; o que não couber vai documentado no README como "próximos passos", não entregue pela metade.
 
+**Prazo: entrega até 2026-07-08 (fim do dia).** Repo público `repo-explorer` no GitHub pessoal. Decisões abaixo travadas em brainstorm de 2026-07-07 — o README explica cada uma.
+
 ## 1. Stack e decisões de partida
 
 | Decisão | Escolha | Justificativa (vai pro README) |
@@ -11,7 +13,7 @@ Plano de execução do teste "Explorador de Repositórios". Referência: enuncia
 | Estado | **Signals (estado) + RxJS (fluxo assíncrono)** | Signals para estado síncrono/derivado da UI (`computed` para favoritos, estados de tela); RxJS onde há tempo/cancelamento (busca digitada). Complementares — sem NgRx: uma feature e meia não justifica o custo de store externa. Se crescesse, a fronteira serviço-com-signals já isola a migração. |
 | HTTP | `HttpClient` + `provideHttpClient(withFetch())` | Padrão da plataforma, interceptors se precisar |
 | TS | `strict: true`, sem `any` solto | Requisito; tipos da API modelados à mão só com os campos usados |
-| Estilo | SCSS puro, layout simples | Enunciado: clareza > design |
+| Estilo | CSS puro, layout simples | Enunciado: clareza > design; sem Material = uma dependência a menos pra justificar |
 | Change detection | `OnPush` em todos os componentes | Dados fluem por signals/inputs imutáveis → seguro; justificativa por componente no README |
 | Zona | Manter zone.js (não zoneless) | Zoneless ainda é passo extra de risco num teste 3-4h; documentar como evolução |
 
@@ -26,12 +28,11 @@ src/app/
       github-error.ts        # mapeia HttpErrorResponse -> AppError (rate-limit | network | http)
   features/
     search/
-      search-page.component.ts      # smart: liga estado <-> apresentação
-      search-state.service.ts       # signals: query, status, results; RxJS pipeline dentro
-      repo-list.component.ts        # dumb, OnPush, @for track repo.id
-      repo-list-item.component.ts   # dumb, OnPush
-    repo-detail/
-      repo-detail-page.component.ts # rota própria /repo/:owner/:name, fetch sob demanda
+      search-page.component.ts       # smart: liga estado <-> apresentação
+      search-state.service.ts        # signals: query, status, results; RxJS pipeline dentro
+      repo-list.component.ts         # dumb, OnPush, @for track repo.id
+      repo-list-item.component.ts    # dumb, OnPush
+      repo-detail-panel.component.ts # painel simples na própria tela; fetch sob demanda ao selecionar
     favorites/
       favorites.service.ts          # signal<Set<repoKey>> + persistência localStorage
       favorites-page.component.ts   # lista separada (rota /favorites)
@@ -42,7 +43,7 @@ app.routes.ts                 # rotas lazy (loadComponent)
 ```
 
 - `shared/` mínimo de verdade (regra: só reuso real).
-- Detalhe é rota própria → deep-linkável, lazy, e força o fetch sob demanda que o enunciado pede.
+- Detalhe é **painel simples** na tela de busca (decisão de brainstorm): seleção dispara fetch de `/repos/{owner}/{repo}` sob demanda; estado de seleção vive no `search-state`. Rota própria vai pro README como alternativa considerada (deep-link) e descartada por escopo.
 
 ## 3. Pipeline da busca (requisito anti-race, coração do teste)
 
@@ -84,6 +85,12 @@ type UiState<T> =
 
 `@switch (state().kind)` no template + `status-panel` compartilhado. Rate limit (403/429 com header `x-ratelimit-remaining: 0`) vira mensagem própria com hora de reset — tratamento "elegante" pedido no enunciado.
 
+## 4b. Rate limit — cache + countdown (decisão de brainstorm)
+
+- **Cache em memória por termo** (`Map<termo, resultado>`) no serviço de busca: corta requisição repetida (10 req/min sem token) e rende parágrafo de trade-off no README (invalidação: cache morre com a sessão, aceitável para busca exploratória).
+- **Countdown**: em 403/429 com `x-ratelimit-remaining: 0`, ler `x-ratelimit-reset` e mostrar hora/contagem pra liberar.
+- **Retry manual** (botão) — nunca automático: retry automático agrava o rate limit.
+
 ## 5. Favoritos
 
 - `FavoritesService`: `signal<Map<string, FavoriteRepo>>` (key `owner/name`), `computed` para lista e para `isFavorite(key)`.
@@ -94,12 +101,14 @@ type UiState<T> =
 
 - `@for (repo of repos; track repo.id)` — obrigatório.
 - Itens `OnPush` + inputs imutáveis.
-- Paginação simples ("carregar mais", 30/página da API) em vez de virtual scroll — API do GitHub pagina de qualquer forma; CDK virtual scroll entra no README como "faria com mais tempo" se a lista fosse local e enorme.
+- Paginação simples ("carregar mais", 30/página da API) em vez de virtual scroll — API do GitHub pagina de qualquer forma; CDK virtual scroll declarado no README como **deixado de fora de propósito** (a resposta sênior é o trade-off, não a feature).
 - `NgOptimizedImage`/`loading="lazy"` nos avatares.
 
 ## 7. Testes (por risco, não por cobertura)
 
-1. **`search-state.service.spec`** — o de maior valor: com `HttpTestingController` + tempo fake, provar debounce (1 request pra N teclas), cancelamento (termo novo cancela antigo), erro → estado `error`, resultado vazio → `empty`.
+Runner: o default do Angular CLI da versão usada — trocar tooling (ex.: Jest) custa setup e não prova nada aqui; justificativa de 1 linha no README.
+
+1. **`search-state.service.spec`** — teste-âncora: com `HttpTestingController` + tempo fake, provar debounce (1 request pra N teclas), cancelamento (termo novo cancela antigo), erro → estado `error`, resultado vazio → `empty`. É a prova executável do requisito anti-race.
 2. **`favorites.service.spec`** — toggle, persistência (localStorage fake), hidratação com JSON inválido.
 3. **`github-error.spec`** — mapeamento 403 rate-limit vs falha de rede.
 4. (se sobrar tempo) `repo-list-item` — render básico + emissão de evento de favorito.
@@ -110,11 +119,13 @@ type UiState<T> =
 2. `feat(core): typed GitHub API service + error mapping`
 3. `feat(search): debounced search with cancellation + result list`
 4. `feat(ui): explicit idle/loading/empty/error states incl. rate limit`
-5. `feat(detail): repo detail route with on-demand fetch`
+5. `feat(detail): detail panel with on-demand fetch`
 6. `feat(favorites): toggle + localStorage persistence + page`
-7. `perf(list): trackBy, OnPush audit, lazy avatars, load more`
-8. `test: search state, favorites, error mapping`
-9. `docs: README with architecture decisions and answers`
+7. `feat(rate-limit): per-term cache, reset countdown, manual retry`
+8. `perf(list): trackBy, OnPush audit, lazy avatars, load more`
+9. `test: search state, favorites, error mapping`
+10. `ci: GitHub Actions with lint, test and build`
+11. `docs: README with architecture decisions and answers`
 
 Uma fatia funcional por commit (tracer bullet: cada uma roda end-to-end).
 
@@ -128,4 +139,12 @@ Uma fatia funcional por commit (tracer bullet: cada uma roda end-to-end).
 
 ## 10. Fora de escopo deliberado (declarar no README)
 
-Auth/OAuth, backend próprio, cobertura exaustiva, design system, i18n, SSR, zoneless, virtual scroll, cache offline de detalhe. Cada um com uma linha de "faria assim".
+Auth/OAuth, backend próprio, cobertura exaustiva, design system, i18n, SSR, zoneless, virtual scroll, cache offline de detalhe, rota deep-link de detalhe. Cada um com uma linha de "faria assim".
+
+## 11. CI (narrativa fullstack end-to-end)
+
+GitHub Actions mínimo: 1 workflow, jobs `lint` → `test` → `build` em push/PR. ~15min de custo, sinaliza operação e release confiável — mesmo argumento de CI/CD da linha fullstack levada pra reunião.
+
+## 12. Uso na reunião de 2026-07-08
+
+Teste e reunião são a mesma frente: cada decisão daqui (switchMap/cancelamento, OnPush+imutabilidade, cache com invalidação pensada, testes por risco, CI) é munição direta pras perguntas técnicas. README escrito pra ser defendido oralmente.
