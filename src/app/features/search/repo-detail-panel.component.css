@@ -1,0 +1,52 @@
+.detail-panel {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  gap: 14px;
+  align-self: start;
+  border: 1px solid #dce3ed;
+  border-radius: 8px;
+  padding: 18px;
+  background: #f9fbfe;
+}
+
+h2,
+p,
+dl {
+  margin: 0;
+}
+
+h2 {
+  color: #172033;
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+
+p {
+  color: #5c6d84;
+  line-height: 1.45;
+}
+
+dl {
+  display: grid;
+  gap: 10px;
+}
+
+dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #dce3ed;
+  padding-top: 10px;
+}
+
+dt {
+  color: #5c6d84;
+}
+
+dd {
+  margin: 0;
+  color: #172033;
+  font-weight: 800;
+  text-align: right;
+}

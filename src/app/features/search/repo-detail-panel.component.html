@@ -1,0 +1,47 @@
+@let current = state();
+
+<aside class="detail-panel">
+  @switch (current.kind) {
+    @case ('idle') {
+      <h2>Repository detail</h2>
+      <p>Select a repository to fetch forks, issues, license, and creation date.</p>
+    }
+    @case ('loading') {
+      <h2>Loading detail</h2>
+      <p>Fetching the repository endpoint separately...</p>
+    }
+    @case ('empty') {
+      <h2>No detail</h2>
+      <p>GitHub did not return detail for this repository.</p>
+    }
+    @case ('error') {
+      <h2>Detail failed</h2>
+      <p>{{ current.error.message }}</p>
+    }
+    @case ('success') {
+      <h2>{{ current.data.fullName }}</h2>
+      @if (current.data.description) {
+        <p>{{ current.data.description }}</p>
+      }
+
+      <dl>
+        <div>
+          <dt>Forks</dt>
+          <dd>{{ current.data.forksCount | number }}</dd>
+        </div>
+        <div>
+          <dt>Open issues</dt>
+          <dd>{{ current.data.openIssuesCount | number }}</dd>
+        </div>
+        <div>
+          <dt>License</dt>
+          <dd>{{ current.data.licenseName ?? 'No license' }}</dd>
+        </div>
+        <div>
+          <dt>Created</dt>
+          <dd>{{ current.data.createdAt | date: 'mediumDate' }}</dd>
+        </div>
+      </dl>
+    }
+  }
+</aside>

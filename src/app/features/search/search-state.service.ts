@@ -13,15 +13,17 @@ import {
 
 import { GithubApiService } from '../../core/github/github-api.service';
 import { toAppError } from '../../core/github/github-error';
-import { RepoSearchResult } from '../../core/github/github.types';
+import { RepoDetail, RepoSearchResult, RepoSummary } from '../../core/github/github.types';
 import { UiState, empty, errorState, idle, loading, success } from '../../shared/ui-state';
 
 @Injectable({ providedIn: 'root' })
 export class SearchStateService {
   private readonly api = inject(GithubApiService);
   private readonly queries = new Subject<string>();
+  private readonly selections = new Subject<RepoSummary | null>();
 
   readonly query = signal('');
+  readonly selectedRepo = signal<RepoSummary | null>(null);
   readonly state = toSignal(
     this.queries.pipe(
       map((query) => query.trim()),
@@ -45,13 +47,37 @@ export class SearchStateService {
     ),
     { initialValue: idle<RepoSearchResult>() },
   );
+  readonly detailState = toSignal(
+    this.selections.pipe(
+      switchMap((repo) => {
+        if (repo === null) {
+          return of(idle<RepoDetail>());
+        }
+
+        const [owner, name] = repo.fullName.split('/');
+        return this.api.getRepo(owner, name).pipe(
+          map((detail) => success<RepoDetail>(detail)),
+          catchError((error: unknown) => of(errorState<RepoDetail>(toAppError(error)))),
+          startWith(loading<RepoDetail>()),
+        );
+      }),
+    ),
+    { initialValue: idle<RepoDetail>() },
+  );
 
   search(query: string): void {
     this.query.set(query);
+    this.selectedRepo.set(null);
+    this.selections.next(null);
     this.queries.next(query);
   }
 
   retry(): void {
     this.queries.next(this.query());
+  }
+
+  select(repo: RepoSummary): void {
+    this.selectedRepo.set(repo);
+    this.selections.next(repo);
   }
 }

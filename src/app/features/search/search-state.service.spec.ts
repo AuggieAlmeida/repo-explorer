@@ -98,6 +98,32 @@ describe('SearchStateService', () => {
       },
     });
   });
+
+  it('loads repository detail on demand when a result is selected', async () => {
+    service.select(repo('angular/angular'));
+
+    const request = http.expectOne('https://api.github.com/repos/angular/angular');
+    expect(service.detailState().kind).toBe('loading');
+
+    request.flush({
+      ...repoResponse('angular/angular'),
+      forks_count: 27_000,
+      open_issues_count: 1_234,
+      license: { name: 'MIT License' },
+      created_at: '2014-09-18T16:12:01Z',
+    });
+
+    expect(service.detailState()).toEqual({
+      kind: 'success',
+      data: {
+        ...repo('angular/angular'),
+        forksCount: 27_000,
+        openIssuesCount: 1_234,
+        licenseName: 'MIT License',
+        createdAt: new Date('2014-09-18T16:12:01Z'),
+      },
+    });
+  });
 });
 
 function searchResponse(fullNames: string[]) {

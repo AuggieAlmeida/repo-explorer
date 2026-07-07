@@ -37,7 +37,10 @@
             <p>GitHub marked this result set as incomplete. Try narrowing your search.</p>
           }
         </div>
-        <app-repo-list [repos]="state.data.items" />
+        <div class="results-grid">
+          <app-repo-list [repos]="state.data.items" (selected)="searchState.select($event)" />
+          <app-repo-detail-panel [state]="searchState.detailState()" />
+        </div>
       }
     }
   </section>
