@@ -21,7 +21,26 @@ describe('SearchPageComponent', () => {
             query: signal(''),
             state: signal({
               kind: 'success',
-              data: { totalCount: 0, incompleteResults: false, items: [] },
+              data: {
+                totalCount: 1,
+                incompleteResults: false,
+                items: [
+                  {
+                    id: 1,
+                    name: 'angular',
+                    fullName: 'angular/angular',
+                    description: 'Deliver web apps with confidence.',
+                    htmlUrl: 'https://github.com/angular/angular',
+                    stargazersCount: 99_000,
+                    language: 'TypeScript',
+                    owner: {
+                      login: 'angular',
+                      avatarUrl: 'https://avatars.githubusercontent.com/u/139426',
+                      htmlUrl: 'https://github.com/angular',
+                    },
+                  },
+                ],
+              },
             }),
             search,
             retry: vi.fn(),
@@ -43,9 +62,10 @@ describe('SearchPageComponent', () => {
     expect(search).toHaveBeenCalledWith('angular');
   });
 
-  it('renders the provisional result dump', () => {
-    const pre = fixture.nativeElement.querySelector('pre') as HTMLElement;
+  it('renders the result summary and repository list', () => {
+    const text = fixture.nativeElement.textContent as string;
 
-    expect(pre.textContent).toContain('"totalCount": 0');
+    expect(text).toContain('1 repositories found');
+    expect(text).toContain('angular/angular');
   });
 });

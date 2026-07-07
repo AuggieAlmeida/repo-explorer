@@ -1,0 +1,28 @@
+@let current = state();
+
+<div class="status" [class.error]="current.kind === 'error'">
+  @switch (current.kind) {
+    @case ('idle') {
+      <h2>Start with a search</h2>
+      <p>Type at least two characters. Requests wait for a short pause before hitting GitHub.</p>
+    }
+    @case ('loading') {
+      <h2>Searching GitHub</h2>
+      <p>Waiting for the API response...</p>
+    }
+    @case ('empty') {
+      <h2>No repositories found</h2>
+      <p>Try a broader term or check the spelling.</p>
+    }
+    @case ('error') {
+      <h2>Search failed</h2>
+      <p>{{ current.error.message }}</p>
+
+      @if (current.error.kind === 'rate-limit' && current.error.resetAt) {
+        <p class="reset">Reset {{ current.error.resetAt | date: 'shortTime' }}</p>
+      }
+
+      <button type="button" (click)="retry.emit()">Try again</button>
+    }
+  }
+</div>

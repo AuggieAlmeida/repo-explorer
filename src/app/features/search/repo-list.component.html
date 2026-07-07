@@ -1,0 +1,5 @@
+<div class="repo-list" role="list">
+  @for (repo of repos(); track repo.id) {
+    <app-repo-list-item role="listitem" [repo]="repo" (selected)="selected.emit($event)" />
+  }
+</div>

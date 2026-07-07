@@ -57,6 +57,8 @@ input:focus-visible {
 }
 
 .results {
+  display: grid;
+  gap: 18px;
   min-height: 280px;
   border: 1px solid #dce3ed;
   border-radius: 8px;
@@ -64,9 +66,20 @@ input:focus-visible {
   background: #ffffff;
 }
 
-pre {
-  max-height: 440px;
+.results-header {
+  display: grid;
+  gap: 6px;
+}
+
+.results-header h2,
+.results-header p {
   margin: 0;
-  overflow: auto;
-  white-space: pre-wrap;
+}
+
+.results-header h2 {
+  font-size: 1.1rem;
+}
+
+.results-header p {
+  color: #5c6d84;
 }

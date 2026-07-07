@@ -19,19 +19,25 @@
   <section class="results" aria-live="polite">
     @switch (state.kind) {
       @case ('idle') {
-        <p>Type at least two characters to start.</p>
+        <app-status-panel [state]="state" (retry)="searchState.retry()" />
       }
       @case ('loading') {
-        <p>Searching GitHub...</p>
+        <app-status-panel [state]="state" (retry)="searchState.retry()" />
       }
       @case ('empty') {
-        <p>No repositories found for this search.</p>
+        <app-status-panel [state]="state" (retry)="searchState.retry()" />
       }
       @case ('error') {
-        <p>{{ state.error.message }}</p>
+        <app-status-panel [state]="state" (retry)="searchState.retry()" />
       }
       @case ('success') {
-        <pre>{{ state.data | json }}</pre>
+        <div class="results-header">
+          <h2>{{ state.data.totalCount | number }} repositories found</h2>
+          @if (state.data.incompleteResults) {
+            <p>GitHub marked this result set as incomplete. Try narrowing your search.</p>
+          }
+        </div>
+        <app-repo-list [repos]="state.data.items" />
       }
     }
   </section>

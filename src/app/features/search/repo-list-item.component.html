@@ -1,0 +1,25 @@
+@let item = repo();
+
+<button class="repo-card" type="button" (click)="selected.emit(item)">
+  <img [src]="item.owner.avatarUrl" [alt]="item.owner.login + ' avatar'" loading="lazy" />
+
+  <span class="content">
+    <span class="heading">
+      <span class="name">{{ item.fullName }}</span>
+      <span class="owner">{{ item.owner.login }}</span>
+    </span>
+
+    @if (item.description) {
+      <span class="description">{{ item.description }}</span>
+    } @else {
+      <span class="description muted">No description provided.</span>
+    }
+
+    <span class="meta">
+      <span>{{ item.stargazersCount | number }} stars</span>
+      @if (item.language) {
+        <span>{{ item.language }}</span>
+      }
+    </span>
+  </span>
+</button>

@@ -1,0 +1,48 @@
+.status {
+  display: grid;
+  gap: 10px;
+  min-height: 220px;
+  place-items: center;
+  align-content: center;
+  padding: 32px;
+  text-align: center;
+}
+
+h2,
+p {
+  margin: 0;
+}
+
+h2 {
+  color: #172033;
+  font-size: 1.25rem;
+}
+
+p {
+  max-width: 520px;
+  color: #5c6d84;
+}
+
+.error h2 {
+  color: #9d2b35;
+}
+
+.reset {
+  font-weight: 700;
+}
+
+button {
+  border: 1px solid #172033;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #172033;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid #85b7ff;
+  outline-offset: 2px;
+}

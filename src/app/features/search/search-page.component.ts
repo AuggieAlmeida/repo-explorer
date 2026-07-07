@@ -1,11 +1,13 @@
-import { JsonPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
+import { StatusPanelComponent } from '../../shared/status-panel.component';
+import { RepoListComponent } from './repo-list.component';
 import { SearchStateService } from './search-state.service';
 
 @Component({
   selector: 'app-search-page',
-  imports: [JsonPipe],
+  imports: [DecimalPipe, RepoListComponent, StatusPanelComponent],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
